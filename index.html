@@ -666,6 +666,37 @@
                                 <input type="checkbox" id="opt_reporting">
                                 <label for="opt_reporting">Reporting Custom</label>
                             </div>
+                            <div id="reporting_famiglie" class="fatturazione-famiglia hidden">
+                                <p>Seleziona le famiglie da includere:</p>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="rep_energia">
+                                    <label for="rep_energia">Energia</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="rep_gas">
+                                    <label for="rep_gas">Gas</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="rep_mobile">
+                                    <label for="rep_mobile">Telefonia Mobile</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="rep_fisso">
+                                    <label for="rep_fisso">Telefonia Fissa</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="rep_internet">
+                                    <label for="rep_internet">Connettività Internet</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="rep_acqua">
+                                    <label for="rep_acqua">Acqua</label>
+                                </div>
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="rep_rifiuti">
+                                    <label for="rep_rifiuti">Gestione Rifiuti</label>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="opzione-item">
@@ -743,6 +774,9 @@
                                 <div style="margin-top: 15px;">
                                     <label>Numero di Capitolati</label>
                                     <input type="number" id="num_capitolati" min="0" value="0" readonly style="background:#f5f7fa; color:#6b7280; cursor:not-allowed;">
+                                </div>
+                                <div id="cons_sconto_info" class="hidden" style="margin-top: 12px; padding: 10px 14px; background: #f0f4ff; border: 1px solid #c7d7fd; border-radius: 2px; color: #1e3a8a; font-size: 0.9em; font-weight: 500;">
+                                    Sconto multi-famiglia applicato: <span id="cons_sconto_label">-</span>
                                 </div>
                             </div>
                         </div>
@@ -885,6 +919,13 @@
         setupNumberFormatting('internet_consumo_manuale');
         setupNumberFormatting('acqua_consumo_manuale');
         
+        document.getElementById('opt_reporting').addEventListener('change', function() {
+            document.getElementById('reporting_famiglie').classList.toggle('hidden', !this.checked);
+            if (!this.checked) {
+                document.querySelectorAll('[id^="rep_"]').forEach(cb => cb.checked = false);
+            }
+        });
+
         document.getElementById('opt_fatturazione').addEventListener('change', function() {
             document.getElementById('fatturazione_famiglie').classList.toggle('hidden', !this.checked);
         });
@@ -901,6 +942,16 @@
             cb.addEventListener('change', function() {
                 const count = document.querySelectorAll('.cons-famiglia:checked').length;
                 document.getElementById('num_capitolati').value = count;
+                const scontoInfo = document.getElementById('cons_sconto_info');
+                const scontoLabel = document.getElementById('cons_sconto_label');
+                const scontoMap = { 2: '10%', 3: '15%', 4: '20%', 5: '25%' };
+                const sconto = scontoMap[count];
+                if (sconto) {
+                    scontoLabel.textContent = sconto;
+                    scontoInfo.classList.remove('hidden');
+                } else {
+                    scontoInfo.classList.add('hidden');
+                }
             });
         });
         
@@ -986,8 +1037,14 @@
             }
             
             if (document.getElementById('opt_reporting').checked) {
-                totaleOpzioni += 1000;
-                dettagli += `<div class="dettaglio-line"><span>Reporting Custom</span><span>Incluso</span></div>`;
+                const repFamiglie = ['energia','gas','mobile','fisso','internet','acqua','rifiuti'];
+                const nomiRep = { energia:'Energia', gas:'Gas', mobile:'Telefonia Mobile', fisso:'Telefonia Fissa', internet:'Connettività Internet', acqua:'Acqua', rifiuti:'Gestione Rifiuti' };
+                const selezionate = repFamiglie.filter(f => document.getElementById('rep_' + f).checked);
+                const listaRep = selezionate.length > 0 ? selezionate.map(f => nomiRep[f]).join(', ') : 'Nessuna famiglia selezionata';
+                const famAggiuntive = Math.max(0, selezionate.length - 1);
+                const costoReporting = 1000 * Math.pow(1.15, famAggiuntive);
+                totaleOpzioni += costoReporting;
+                dettagli += `<div class="dettaglio-line"><span>Reporting Custom (${listaRep})</span><span>€ ${formatEuro(costoReporting)}</span></div>`;
             }
             
             if (document.getElementById('opt_ai').checked) {
@@ -1017,10 +1074,16 @@
             }
             
             if (document.getElementById('opt_consulenza').checked) {
-                const numCapitolati = parseInt(document.getElementById('num_capitolati').value) || 1;
-                const costoConsulenza = 2000 * numCapitolati;
-                totaleOpzioni += costoConsulenza;
-                dettagli += `<div class="dettaglio-line"><span>Consulenza per Gare (${numCapitolati} capitolati)</span><span>€ ${formatEuro(costoConsulenza)}</span></div>`;
+                const numCapitolati = parseInt(document.getElementById('num_capitolati').value) || 0;
+                if (numCapitolati > 0) {
+                    const scontoMap = { 2: 0.10, 3: 0.15, 4: 0.20, 5: 0.25 };
+                    const scontoPerc = scontoMap[numCapitolati] || 0;
+                    const costoBase = 2000 * numCapitolati;
+                    const costoConsulenza = costoBase * (1 - scontoPerc);
+                    totaleOpzioni += costoConsulenza;
+                    const scontoDesc = scontoPerc > 0 ? `, sconto multi-famiglia ${scontoPerc * 100}%` : '';
+                    dettagli += `<div class="dettaglio-line"><span>Consulenza per Gare (${numCapitolati} capitolati${scontoDesc})</span><span>€ ${formatEuro(costoConsulenza)}</span></div>`;
+                }
             }
             
             let totale = totaleServizio + totaleOpzioni;
@@ -1037,8 +1100,14 @@
                 dettagli += `<div class="dettaglio-line"><span>Sconto Direzione Commerciale</span><span>Da Autorizzare</span></div>`;
             }
             
+            const totaleArrotondato = Math.floor(totale / 100) * 100;
+            const arrotondamento = totale - totaleArrotondato;
+            if (arrotondamento > 0) {
+                dettagli += `<div class="dettaglio-line"><span>Arrotondamento</span><span>- € ${formatEuro(arrotondamento)}</span></div>`;
+            }
+
             document.getElementById('dettagli').innerHTML = `<div class="dettaglio">${dettagli}</div>`;
-            document.getElementById('totale_finale').textContent = `€ ${formatEuro(totale)}`;
+            document.getElementById('totale_finale').textContent = `€ ${formatEuro(totaleArrotondato)}`;
             window.uniqueID = generaUniqueID();
             document.getElementById('risultato').style.display = 'block';
             document.getElementById('risultato').scrollIntoView({ behavior: 'smooth' });
