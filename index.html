@@ -63,10 +63,7 @@
         .campo-obbligatorio { border-color: #dc2626 !important; }
         .messaggio-errore { color: #dc2626; font-size: 0.85em; margin-top: 5px; display: none; }
         .badge-futuro { font-size: 0.7em; font-weight: 500; color: #b45309; background: #fef3c7; border: 1px solid #f59e0b; padding: 2px 8px; border-radius: 2px; margin-left: auto; }
-        /* Debug panel */
-        #debug_panel { background: #1e1e1e; color: #d4d4d4; font-family: 'Courier New', monospace; font-size: 0.82em; padding: 20px 25px; border-radius: 2px; margin-top: 30px; border: 1px solid #333; }
-        #debug_panel .debug-title { color: #9cdcfe; font-weight: bold; margin-bottom: 12px; font-size: 0.95em; text-transform: uppercase; letter-spacing: 1px; }
-        @media print { body { background: white; padding: 0; } .container { box-shadow: none; } button { display: none; } #debug_panel { display: none; } }
+        @media print { body { background: white; padding: 0; } .container { box-shadow: none; } button { display: none; } }
     </style>
 </head>
 <body>
@@ -180,7 +177,8 @@
                             <option value="1500000">Oltre 1.000.000 smc</option>
                         </select>
                     </div>
-                    <!-- Telecomunicazioni (Mobile + Fissa + Internet) -->
+
+                    <!-- TELECOMUNICAZIONI -->
                     <div style="grid-column: 1 / -1; background: #fafbfc; border: 1px solid #e5e7eb; border-radius: 2px; padding: 30px;">
                         <div style="display:flex;align-items:center;gap:10px;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid #e5e7eb;">
                             <span style="width:4px;height:20px;background:#1e40af;border-radius:2px;flex-shrink:0;display:inline-block;"></span>
@@ -194,7 +192,6 @@
                                     <div><label>Schede (SIM)</label><input type="number" id="mobile_dispositivi" min="0" max="1000" value="0"></div>
                                     <div><label>Operatori</label><input type="number" id="mobile_operatori" min="0" value="0"></div>
                                 </div>
-
                             </div>
                             <!-- Telefonia Fissa -->
                             <div style="background:white;border:1px solid #e5e7eb;border-radius:2px;padding:20px;">
@@ -204,7 +201,6 @@
                                     <div><label>Operatori</label><input type="number" id="fisso_operatori" min="0" value="0"></div>
                                     <div><label>N° Sedi</label><input type="number" id="fisso_sedi" min="0" value="0"></div>
                                 </div>
-
                             </div>
                             <!-- Connettività Internet -->
                             <div style="background:white;border:1px solid #e5e7eb;border-radius:2px;padding:20px;">
@@ -219,7 +215,6 @@
                                     <label><input type="radio" name="internet_tipo_conn" value="standard" checked> Standard</label>
                                     <label><input type="radio" name="internet_tipo_conn" value="dedicata"> Dedicata</label>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -360,16 +355,12 @@
                 <div id="avviso_direzione" class="hidden" style="margin:-10px 0 20px 0;padding:16px 24px;background:#fff7ed;border:2px solid #f59e0b;border-radius:2px;color:#92400e;font-size:0.92em;font-weight:600;text-align:center;line-height:1.6;">
                     ⚠️ ATTENZIONE! Per proposte commerciali con importi di questo tipo è indispensabile il benestare della Direzione Commerciale di FBC Group prima di presentare la proposta al Cliente.
                 </div>
-                <!-- Debug panel (interno al risultato) -->
-                <div id="debug_panel" class="hidden" style="margin-top:20px;">
-                    <div style="background:#1e1e1e;color:#d4d4d4;font-family:'Courier New',monospace;font-size:0.82em;padding:20px 25px;border-radius:2px;border:1px solid #333;">
-                        <div style="color:#9cdcfe;font-weight:bold;margin-bottom:12px;font-size:0.95em;text-transform:uppercase;letter-spacing:1px;">🔍 Debug — Componente Consumo</div>
-                        <div id="debug_content"></div>
-                    </div>
+                <div id="debug_panel" class="hidden">
+                    <div id="debug_content"></div>
                 </div>
                 <div style="text-align:center;margin-top:30px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;">
                     <button onclick="downloadOfferta()" style="background:white;color:#1e3a8a;border:2px solid #1e3a8a;padding:12px 40px;font-size:1em;">Scarica Offerta (TXT)</button>
-                    <button id="btn_calcoli" onclick="downloadCalcoli()" class="hidden" style="background:white;color:#1e6b3a;border:2px solid #1e6b3a;padding:12px 40px;font-size:1em;">Genera File di Calcolo (TXT)</button>
+                    <button id="btn_calcoli" onclick="downloadCalcoli()" style="background:white;color:#1e6b3a;border:2px solid #1e6b3a;padding:12px 40px;font-size:1em;display:none;">Genera File di Calcolo (TXT)</button>
                 </div>
             </div>
         </div>
@@ -406,19 +397,19 @@
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         radio.addEventListener('change', function() {
             const f = this.name.replace('_consumo_tipo','');
-            const wrap   = document.getElementById('wrap_' + f);
+            const wrap    = document.getElementById('wrap_' + f);
             const manuale = document.getElementById(f + '_consumo_manuale');
             const range   = document.getElementById(f + '_consumo_range');
-            const isManuale = this.value === 'manuale';
-            if (wrap)    wrap.classList.toggle('hidden', !isManuale);
-            else if (manuale) manuale.classList.toggle('hidden', !isManuale);
-            if (range)   range.classList.toggle('hidden', isManuale);
+            const isM = this.value === 'manuale';
+            if (wrap)    wrap.classList.toggle('hidden', !isM);
+            else if (manuale) manuale.classList.toggle('hidden', !isM);
+            if (range)   range.classList.toggle('hidden', isM);
         });
     });
 
     // ── FORMATTAZIONE ─────────────────────────────────────────────────────────
     function formatNumber(n) { return n.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
-    ['energia','gas','mobile','fisso','internet','acqua'].forEach(f => {
+    ['energia','gas','acqua'].forEach(f => {
         const el = document.getElementById(f + '_consumo_manuale');
         if (!el) return;
         const fmt = e => { const v = e.target.value.replace(/\./g,''); if (v) e.target.value = formatNumber(v); };
@@ -438,7 +429,10 @@
     });
     document.getElementById('opt_fatturazione').addEventListener('change', function() {
         document.getElementById('fatturazione_famiglie').classList.toggle('hidden', !this.checked);
-        if (!this.checked) document.querySelectorAll('[id^="fatt_"]').forEach(cb => cb.checked = false);
+        if (!this.checked) {
+            document.getElementById('fatt_energia').checked = false;
+            document.getElementById('fatt_gas').checked = false;
+        }
     });
     document.getElementById('opt_consulenza').addEventListener('change', function() {
         document.getElementById('consulenza_input').classList.toggle('hidden', !this.checked);
@@ -454,12 +448,8 @@
             document.getElementById('num_capitolati').value = count;
             const scontoMap = {2:'10%',3:'15%',4:'20%',5:'25%'};
             const info = document.getElementById('cons_sconto_info');
-            if (scontoMap[count]) {
-                document.getElementById('cons_sconto_label').textContent = scontoMap[count];
-                info.classList.remove('hidden');
-            } else {
-                info.classList.add('hidden');
-            }
+            if (scontoMap[count]) { document.getElementById('cons_sconto_label').textContent = scontoMap[count]; info.classList.remove('hidden'); }
+            else info.classList.add('hidden');
         });
     });
 
@@ -477,11 +467,17 @@
 
     function percConsumo(c) {
         if (c <= 0) return 0;
-        const logMin = Math.log(50000);
-        const logMax = Math.log(5000000);
+        const logMin = Math.log(50000), logMax = Math.log(5000000);
         const t = (Math.min(Math.max(Math.log(c), logMin), logMax) - logMin) / (logMax - logMin);
-        // t=0 → 3%, t=1 → 0.5%
         return (3 - 2.5 * t) / 100;
+    }
+
+    function maggiorazioneOperatori(op) {
+        if (op <= 1) return 0;
+        if (op === 2) return 0.10;
+        if (op === 3) return 0.20;
+        if (op === 4) return 0.30;
+        return 0.40;
     }
 
     function calcolaFamiglia(f, totDisp, totCons) {
@@ -492,14 +488,15 @@
             if (disp <= 5)        pu = 50;
             else if (disp <= 100) pu = Math.max(5, 50 - (disp - 5) * (45/95));
             else                  pu = 5;
+        } else if (f.id === 'mobile') {
+            if (disp <= 5)        pu = 45 * 12 * 0.20;
+            else if (disp <= 60)  pu = 15 * 12 * 0.20;
+            else                  pu = 15 * 12 * 0.15;
         } else if (f.id === 'fisso') {
             pu = disp <= 15 ? 5 * 12 * 0.20 : 5 * 12 * 0.15;
         } else if (f.id === 'internet') {
             const dedicata = document.querySelector('input[name="internet_tipo_conn"]:checked').value === 'dedicata';
-            pu = dedicata ? 300 * 12 * 0.20 : 50 * 12 * 0.20;        } else if (f.id === 'mobile') {
-            if (disp <= 5)       pu = 45 * 12 * 0.20;
-            else if (disp <= 60) pu = 15 * 12 * 0.20;
-            else                 pu = 15 * 12 * 0.15;
+            pu = dedicata ? 300 * 12 * 0.20 : 50 * 12 * 0.20;
         } else if (f.id === 'rifiuti') {
             pu = 300;
         } else {
@@ -510,32 +507,28 @@
         if (f.id === 'energia') { const c = getConsumo('energia'); cc = c * 0.21 * percConsumo(c); }
         else if (f.id === 'gas')   { const c = getConsumo('gas');    cc = c * 0.80 * percConsumo(c); }
         else if (f.id === 'acqua') { const c = getConsumo('acqua');  cc = c * percConsumo(c); }
+
         let costo = pu * disp + cc;
-        // Moltiplicatore N° Sedi per Telefonia Fissa e Connettività Internet
-        if (f.id === 'fisso' || f.id === 'internet') {
-            const sedi = parseInt(document.getElementById(f.id + '_sedi').value) || 0;
-            if (sedi > 1) costo = costo * sedi;
-        }
-        // Maggiorazione multi-operatore per Energia e Gas (solo se PDP > 1 e operatori > 1)
+
+        // Maggiorazione multi-operatore Energia e Gas (PDP > 1, op > 1)
         if (['energia','gas'].includes(f.id) && disp > 1) {
             const op = parseInt(document.getElementById(f.id + '_operatori').value) || 0;
-            const maggiMap = {2:0.10, 3:0.20, 4:0.30};
-            const maggiorazione = op >= 5 ? 0.40 : (maggiMap[op] || 0);
-            costo = costo * (1 + maggiorazione);
+            costo *= (1 + maggiorazioneOperatori(op));
         }
-        // Maggiorazione multi-operatore per Telefonia Mobile (solo se schede > 5 e operatori > 1)
+        // Maggiorazione multi-operatore Telefonia Mobile (schede > 5, op > 1)
         if (f.id === 'mobile' && disp > 5) {
             const op = parseInt(document.getElementById('mobile_operatori').value) || 0;
-            const maggiMap = {2:0.10, 3:0.20, 4:0.30};
-            const maggiorazione = op >= 5 ? 0.40 : (maggiMap[op] || 0);
-            costo = costo * (1 + maggiorazione);
+            costo *= (1 + maggiorazioneOperatori(op));
         }
-        // Maggiorazione multi-operatore per Telefonia Fissa e Connettività Internet (solo se disp > 2 e operatori > 1)
+        // Maggiorazione multi-operatore Fissa e Internet (disp > 2, op > 1)
         if (['fisso','internet'].includes(f.id) && disp > 2) {
             const op = parseInt(document.getElementById(f.id + '_operatori').value) || 0;
-            const maggiMap = {2:0.10, 3:0.20, 4:0.30};
-            const maggiorazione = op >= 5 ? 0.40 : (maggiMap[op] || 0);
-            costo = costo * (1 + maggiorazione);
+            costo *= (1 + maggiorazioneOperatori(op));
+        }
+        // Moltiplicatore N° Sedi per Fissa e Internet
+        if (f.id === 'fisso' || f.id === 'internet') {
+            const sedi = parseInt(document.getElementById(f.id + '_sedi').value) || 0;
+            if (sedi > 1) costo *= sedi;
         }
         return { disp, costo };
     }
@@ -545,7 +538,22 @@
         return `<div class="dettaglio-line"${style}><span>${desc}</span><span>${imp}</span></div>`;
     }
 
-    // ── CALCOLO ───────────────────────────────────────────────────────────────
+    // ── CALCOLO FATTURAZIONE (funzione separata per riuso) ────────────────────
+    function calcolaFatturazione() {
+        // Restituisce null se opt non selezionato o nessuna famiglia spuntata
+        if (!document.getElementById('opt_fatturazione').checked) return null;
+        const fattEnergia = document.getElementById('fatt_energia').checked;
+        const fattGas     = document.getElementById('fatt_gas').checked;
+        if (!fattEnergia && !fattGas) return null;
+        let dispFatt = 0;
+        if (fattEnergia) dispFatt += parseInt(document.getElementById('energia_dispositivi').value) || 0;
+        if (fattGas)     dispFatt += parseInt(document.getElementById('gas_dispositivi').value) || 0;
+        const setup = dispFatt <= 20 ? 260 : dispFatt <= 50 ? 420 : dispFatt <= 200 ? 840 : 1700;
+        const costo = (setup + 3.1 * dispFatt * 12) * 1.35;
+        return { dispFatt, setup, costo };
+    }
+
+    // ── CALCOLO PRINCIPALE ────────────────────────────────────────────────────
     window.offertaDati = { base:[], pro:[], riepilogo:[], totale:'' };
 
     function calcolaOfferta() {
@@ -564,7 +572,7 @@
         let totDisp = 0, totCons = 0;
         famiglie.forEach(f => {
             totDisp += parseInt(document.getElementById(f.id+'_dispositivi').value) || 0;
-            if (!['mobile','fisso','internet'].includes(f.id)) totCons += getConsumo(f.id) / 100000;
+            if (['energia','gas'].includes(f.id)) totCons += getConsumo(f.id) / 100000;
         });
 
         const righeBase = [], righePro = [], righeRiep = [];
@@ -575,10 +583,10 @@
             const res = calcolaFamiglia(f, totDisp, totCons);
             if (res) {
                 totaleServizio += res.costo;
-                const unita = ['energia','gas','acqua'].includes(f.id) ? 'PDP'
-                    : f.id === 'mobile'   ? (res.disp === 1 ? 'Scheda'     : 'Schede')
-                    : f.id === 'fisso'    ? (res.disp === 1 ? 'Sistema'    : 'Sistemi')
-                    : f.id === 'internet' ? (res.disp === 1 ? 'Connessione': 'Connessioni')
+                const unita = ['energia','gas'].includes(f.id) ? 'PDP'
+                    : f.id === 'mobile'   ? (res.disp === 1 ? 'Scheda'      : 'Schede')
+                    : f.id === 'fisso'    ? (res.disp === 1 ? 'Sistema'     : 'Sistemi')
+                    : f.id === 'internet' ? (res.disp === 1 ? 'Connessione' : 'Connessioni')
                     : 'dispositivi';
                 const desc = `${f.nome} (${res.disp} ${unita})`;
                 const imp  = `€ ${formatEuro(res.costo)}`;
@@ -596,16 +604,16 @@
             htmlBase += dLine(desc, imp);
         }
 
-        // Modulo PRO
         let totaleOpzioni = 0;
 
+        // RFQ Dedicato
         if (document.getElementById('opt_consulenza').checked) {
             const n = parseInt(document.getElementById('num_capitolati').value) || 0;
             const hasFamiglie = document.querySelectorAll('.cons-famiglia:checked').length > 0;
             if (n > 0 && hasFamiglie) {
                 const scontoMap = {2:0.10,3:0.15,4:0.20,5:0.25};
                 const sc = scontoMap[n] || 0;
-                const costo = 2000 * n * (1-sc);
+                const costo = 2000 * n * (1 - sc);
                 totaleOpzioni += costo;
                 const scDesc = sc > 0 ? `, sconto ${sc*100}%` : '';
                 const desc = `RFQ Dedicato (${n} capitolati${scDesc})`, imp = `€ ${formatEuro(costo)}`;
@@ -613,19 +621,16 @@
             }
         }
 
-        if (document.getElementById('opt_fatturazione').checked) {
-            let dispFatt = 0;
-            ['energia','gas'].forEach(f => {
-                if (document.getElementById('fatt_'+f).checked)
-                    dispFatt += parseInt(document.getElementById(f+'_dispositivi').value) || 0;
-            });
-            const setup = dispFatt<=20 ? 260 : dispFatt<=50 ? 420 : dispFatt<=200 ? 840 : 1700;
-            const costo = (setup + 3.1*dispFatt*12) * 1.35;
-            totaleOpzioni += costo;
-            const desc = `Servizio Verifica Corretta Fatturazione (${dispFatt} dispositivi)`, imp = `€ ${formatEuro(costo)}`;
+        // Verifica Fatturazione
+        const fattRes = calcolaFatturazione();
+        if (fattRes) {
+            totaleOpzioni += fattRes.costo;
+            const desc = `Servizio Verifica Corretta Fatturazione (${fattRes.dispFatt} dispositivi)`;
+            const imp  = `€ ${formatEuro(fattRes.costo)}`;
             righePro.push({desc, imp}); htmlPro += dLine(desc, imp);
         }
 
+        // Priority Ticket
         if (document.getElementById('opt_gestione_prioritaria').checked) {
             const perc = totaleServizio < 10000 ? 10 : totaleServizio > 50000 ? 1.5 : 5;
             const costo = totaleServizio * perc / 100;
@@ -634,12 +639,13 @@
             righePro.push({desc, imp}); htmlPro += dLine(desc, imp);
         }
 
+        // Report Dedicati
         if (document.getElementById('opt_reporting').checked) {
             const nomiRep = {energia:'Energia', gas:'Gas', mobile:'Telefonia Mobile', fissoint:'Telefonia Fissa & Connettività'};
             const sel = Object.keys(nomiRep).filter(f => document.getElementById('rep_'+f).checked);
             if (sel.length > 0) {
                 const lista = sel.map(f => nomiRep[f]).join(', ');
-                const costo = 1000 * Math.pow(1.15, Math.max(0, sel.length-1));
+                const costo = 1000 * Math.pow(1.15, Math.max(0, sel.length - 1));
                 totaleOpzioni += costo;
                 const desc = `Report Dedicati (${lista})`, imp = `€ ${formatEuro(costo)}`;
                 righePro.push({desc, imp}); htmlPro += dLine(desc, imp);
@@ -661,8 +667,8 @@
             const desc='Sconto Direzione Commerciale', imp='Da Autorizzare';
             righeRiep.push({desc,imp}); htmlRiep += dLine(desc,imp);
         }
-        const totArr = Math.floor(totale/100)*100;
-        const arrot = totale - totArr;
+        const totArr = Math.floor(totale / 100) * 100;
+        const arrot  = totale - totArr;
         if (arrot > 0) {
             const desc='Arrotondamento', imp=`- € ${formatEuro(arrot)}`;
             righeRiep.push({desc,imp}); htmlRiep += dLine(desc,imp);
@@ -674,7 +680,7 @@
             scontoDirezione: document.getElementById('sconto_direzione').checked
         };
 
-        // HTML riepilogo
+        // HTML risultato
         let html = '';
         if (htmlBase) html += `<div class="sezione-label">Modulo BASE</div><div class="dettaglio">${htmlBase}</div>`;
         if (htmlPro)  html += `<div class="sezione-label" style="margin-top:20px;">Modulo PRO</div><div class="dettaglio">${htmlPro}</div>`;
@@ -706,357 +712,24 @@
             </div>`;
         }
 
-        // Debug
-        const dbg = (label, val) => `<div><span style="color:#9cdcfe;">${label}:</span> <span style="color:#ce9178;">${val}</span></div>`;
-        let debugHtml = '';
-        ['energia','gas'].forEach(fid => {
-            const c    = getConsumo(fid);
-            const disp = parseInt(document.getElementById(fid+'_dispositivi').value)||0;
-            if (disp > 0 || c > 0) {
-                let pu = disp <= 5 ? 50 : disp <= 100 ? Math.max(5, 50-(disp-5)*(45/95)) : 5;
-                const perc = percConsumo(c);
-                const costoUtilities = fid === 'energia' ? c * 0.21 : c * 0.80;
-                const cc = costoUtilities * perc;
-                debugHtml += `<div style="margin-top:8px;color:#4ec9b0;font-weight:bold;">${fid.toUpperCase()}</div>`;
-                debugHtml += dbg('  disp', disp);
-                debugHtml += dbg('  consumo letto', c);
-                debugHtml += dbg('  prezzoUnitario', '€ '+pu.toFixed(2));
-                debugHtml += dbg('  costo PDP', '€ '+(pu*disp).toFixed(2));
-                debugHtml += dbg('  costo utilities (cons×tariffa)', '€ '+costoUtilities.toFixed(2));
-                const logMin = Math.log(50000), logMax = Math.log(5000000);
-                const t = (Math.min(Math.max(Math.log(c||1), logMin), logMax) - logMin) / (logMax - logMin);
-                debugHtml += dbg('  t', t.toFixed(6));
-                debugHtml += dbg('  % applicata', (perc*100).toFixed(4)+'%');
-                debugHtml += dbg('  componente consumo', '€ '+cc.toFixed(2));
-                debugHtml += dbg('  TOTALE', '€ '+(pu*disp+cc).toFixed(2));
-            }
-        });
-        // debug disattivato
-        document.getElementById('debug_panel').classList.add('hidden');
-
         document.getElementById('dettagli').innerHTML = html;
         document.getElementById('totale_finale').textContent = `€ ${formatEuro(totArr)}`;
         const avviso = document.getElementById('avviso_direzione');
         if (totArr > 8000) avviso.classList.remove('hidden');
         else avviso.classList.add('hidden');
         window.uniqueID = `FBC-${Date.now()}-${Math.floor(Math.random()*10000).toString().padStart(4,'0')}`;
-        const abilitati = ['pallotta','bussini','bevilacqua','gandolfi'];
-        const um = (document.getElementById('utility_manager').value || '').toLowerCase().trim();
-        const mostraCalcoli = abilitati.some(n => um.includes(n));
-        document.getElementById('btn_calcoli').classList.toggle('hidden', !mostraCalcoli);
 
+        // Mostra pulsante calcoli solo per utenti autorizzati
+        const umVal = (document.getElementById('utility_manager').value || '').trim().toLowerCase();
+        const autorizzati = ['bevilacqua','bussini','pallotta','gandolfi'];
+        const btnCalcoli = document.getElementById('btn_calcoli');
+        if (autorizzati.some(n => umVal.includes(n))) btnCalcoli.style.display = '';
+        else btnCalcoli.style.display = 'none';
         document.getElementById('risultato').style.display = 'block';
         document.getElementById('risultato').scrollIntoView({behavior:'smooth'});
     }
 
-    // ── DOWNLOAD FILE DI CALCOLO ──────────────────────────────────────────────
-    function downloadCalcoli() {
-        const sep  = t => `\n${'='.repeat(60)}\n  ${t}\n${'='.repeat(60)}\n\n`;
-        const sub  = t => `  ── ${t} ${'─'.repeat(Math.max(0,50-t.length))}\n`;
-        const riga = (label, val) => `    ${label.padEnd(45)} ${String(val).padStart(14)}\n`;
-
-        let txt = sep('FILE DI CALCOLO — SERVIZIO UTILITY MANAGEMENT');
-        txt += `  Cliente:         ${document.getElementById('nome_cliente').value || 'N/A'}\n`;
-        txt += `  Protocollo:      ${document.getElementById('protocollo').value || 'N/A'}\n`;
-        txt += `  Data:            ${document.getElementById('data_proposta').value || ''}\n`;
-        txt += `  Unique ID:       ${window.uniqueID || 'N/A'}\n\n`;
-        txt += `  Nota: tutti gli importi sono in Euro, IVA esclusa.\n`;
-
-        // ── MODULO BASE ──
-        txt += sep('MODULO BASE');
-
-        const famiglie = [
-            {nome:'Energia',               id:'energia'},
-            {nome:'Gas',                   id:'gas'},
-            {nome:'Telefonia Mobile',      id:'mobile'},
-            {nome:'Telefonia Fissa',       id:'fisso'},
-            {nome:'Connettività Internet', id:'internet'}
-        ];
-
-        let totaleServizio = 0;
-        const dettagliBase = [];
-
-        famiglie.forEach(f => {
-            const disp = parseInt(document.getElementById(f.id+'_dispositivi').value) || 0;
-            if (disp === 0) return;
-
-            txt += sub(f.nome);
-
-            // ── ENERGIA ──
-            if (f.id === 'energia') {
-                const c = getConsumo('energia');
-                const op = parseInt(document.getElementById('energia_operatori').value) || 0;
-                let pu = disp <= 5 ? 50 : disp <= 100 ? Math.max(5, 50-(disp-5)*(45/95)) : 5;
-                const costoPDP = pu * disp;
-                const logMin = Math.log(50000), logMax = Math.log(5000000);
-                const t = c > 0 ? (Math.min(Math.max(Math.log(c),logMin),logMax)-logMin)/(logMax-logMin) : 0;
-                const perc = c > 0 ? (3 - 2.5*t)/100 : 0;
-                const costoUtils = c * 0.21;
-                const cc = costoUtils * perc;
-                let costo = costoPDP + cc;
-                txt += riga('PDP inseriti', disp);
-                txt += riga('Prezzo unitario PDP', `€ ${pu.toFixed(2)}`);
-                txt += riga('Costo componente PDP (pu × PDP)', `€ ${costoPDP.toFixed(2)}`);
-                txt += riga('Consumo stimato', `${c.toLocaleString('it-IT')} kWh`);
-                txt += riga('Costo utilities (consumo × €0,21)', `€ ${costoUtils.toFixed(2)}`);
-                txt += riga('t (scala logaritmica 50k–5M)', t.toFixed(4));
-                txt += riga('% servizio applicata (3% - 2,5%×t)', `${(perc*100).toFixed(4)}%`);
-                txt += riga('Componente consumo (utilities × %)', `€ ${cc.toFixed(2)}`);
-                txt += riga('Subtotale (PDP + consumo)', `€ ${costo.toFixed(2)}`);
-                if (disp > 1 && op > 1) {
-                    const maggiMap = {2:0.10,3:0.20,4:0.30};
-                    const m = op >= 5 ? 0.40 : (maggiMap[op]||0);
-                    txt += riga(`Operatori: ${op} → maggiorazione`, `+${(m*100)}%`);
-                    costo = costo * (1+m);
-                    txt += riga('Costo dopo maggiorazione', `€ ${costo.toFixed(2)}`);
-                }
-                txt += riga('TOTALE ENERGIA', `€ ${costo.toFixed(2)}`);
-                totaleServizio += costo;
-                dettagliBase.push({desc:`Energia (${disp} PDP)`, imp:`€ ${formatEuro(costo)}`});
-
-            // ── GAS ──
-            } else if (f.id === 'gas') {
-                const c = getConsumo('gas');
-                const op = parseInt(document.getElementById('gas_operatori').value) || 0;
-                let pu = disp <= 5 ? 50 : disp <= 100 ? Math.max(5, 50-(disp-5)*(45/95)) : 5;
-                const costoPDP = pu * disp;
-                const logMin = Math.log(50000), logMax = Math.log(5000000);
-                const t = c > 0 ? (Math.min(Math.max(Math.log(c),logMin),logMax)-logMin)/(logMax-logMin) : 0;
-                const perc = c > 0 ? (3 - 2.5*t)/100 : 0;
-                const costoUtils = c * 0.80;
-                const cc = costoUtils * perc;
-                let costo = costoPDP + cc;
-                txt += riga('PDP inseriti', disp);
-                txt += riga('Prezzo unitario PDP', `€ ${pu.toFixed(2)}`);
-                txt += riga('Costo componente PDP (pu × PDP)', `€ ${costoPDP.toFixed(2)}`);
-                txt += riga('Consumo stimato', `${c.toLocaleString('it-IT')} Smc`);
-                txt += riga('Costo utilities (consumo × €0,80)', `€ ${costoUtils.toFixed(2)}`);
-                txt += riga('t (scala logaritmica 50k–5M)', t.toFixed(4));
-                txt += riga('% servizio applicata (3% - 2,5%×t)', `${(perc*100).toFixed(4)}%`);
-                txt += riga('Componente consumo (utilities × %)', `€ ${cc.toFixed(2)}`);
-                txt += riga('Subtotale (PDP + consumo)', `€ ${costo.toFixed(2)}`);
-                if (disp > 1 && op > 1) {
-                    const maggiMap = {2:0.10,3:0.20,4:0.30};
-                    const m = op >= 5 ? 0.40 : (maggiMap[op]||0);
-                    txt += riga(`Operatori: ${op} → maggiorazione`, `+${(m*100)}%`);
-                    costo = costo * (1+m);
-                    txt += riga('Costo dopo maggiorazione', `€ ${costo.toFixed(2)}`);
-                }
-                txt += riga('TOTALE GAS', `€ ${costo.toFixed(2)}`);
-                totaleServizio += costo;
-                dettagliBase.push({desc:`Gas (${disp} PDP)`, imp:`€ ${formatEuro(costo)}`});
-
-            // ── TELEFONIA MOBILE ──
-            } else if (f.id === 'mobile') {
-                const op = parseInt(document.getElementById('mobile_operatori').value) || 0;
-                const pu = disp <= 5 ? 45*12*0.20 : disp <= 60 ? 15*12*0.20 : 15*12*0.15;
-                const fascia = disp <= 5 ? '1–5 schede: €45×12×20%' : disp <= 60 ? '6–60 schede: €15×12×20%' : '61+ schede: €15×12×15%';
-                let costo = pu * disp;
-                txt += riga('Schede inserite', disp);
-                txt += riga(`Fascia applicata`, fascia);
-                txt += riga('Prezzo unitario', `€ ${pu.toFixed(2)}`);
-                txt += riga('Costo base (pu × schede)', `€ ${costo.toFixed(2)}`);
-                if (disp > 5 && op > 1) {
-                    const maggiMap = {2:0.10,3:0.20,4:0.30};
-                    const m = op >= 5 ? 0.40 : (maggiMap[op]||0);
-                    txt += riga(`Operatori: ${op} → maggiorazione`, `+${(m*100)}%`);
-                    costo = costo * (1+m);
-                    txt += riga('Costo dopo maggiorazione', `€ ${costo.toFixed(2)}`);
-                }
-                txt += riga('TOTALE TELEFONIA MOBILE', `€ ${costo.toFixed(2)}`);
-                totaleServizio += costo;
-                dettagliBase.push({desc:`Telefonia Mobile (${disp} Schede)`, imp:`€ ${formatEuro(costo)}`});
-
-            // ── TELEFONIA FISSA ──
-            } else if (f.id === 'fisso') {
-                const op    = parseInt(document.getElementById('fisso_operatori').value) || 0;
-                const sedi  = parseInt(document.getElementById('fisso_sedi').value) || 0;
-                const pu    = disp <= 15 ? 5*12*0.20 : 5*12*0.15;
-                const fascia = disp <= 15 ? '1–15 linee: €5×12×20%' : '16+ linee: €5×12×15%';
-                let costo = pu * disp;
-                txt += riga('Sistemi (linee) inseriti', disp);
-                txt += riga('Fascia applicata', fascia);
-                txt += riga('Prezzo unitario', `€ ${pu.toFixed(2)}`);
-                txt += riga('Costo base (pu × linee)', `€ ${costo.toFixed(2)}`);
-                if (disp > 2 && op > 1) {
-                    const maggiMap = {2:0.10,3:0.20,4:0.30};
-                    const m = op >= 5 ? 0.40 : (maggiMap[op]||0);
-                    txt += riga(`Operatori: ${op} → maggiorazione`, `+${(m*100)}%`);
-                    costo = costo * (1+m);
-                    txt += riga('Costo dopo maggiorazione', `€ ${costo.toFixed(2)}`);
-                }
-                if (sedi > 1) {
-                    txt += riga(`N° Sedi: ${sedi} → moltiplicatore`, `×${sedi}`);
-                    costo = costo * sedi;
-                    txt += riga('Costo dopo moltiplicatore sedi', `€ ${costo.toFixed(2)}`);
-                }
-                txt += riga('TOTALE TELEFONIA FISSA', `€ ${costo.toFixed(2)}`);
-                totaleServizio += costo;
-                dettagliBase.push({desc:`Telefonia Fissa (${disp} Sistemi)`, imp:`€ ${formatEuro(costo)}`});
-
-            // ── CONNETTIVITÀ INTERNET ──
-            } else if (f.id === 'internet') {
-                const op       = parseInt(document.getElementById('internet_operatori').value) || 0;
-                const sedi     = parseInt(document.getElementById('internet_sedi').value) || 0;
-                const dedicata = document.querySelector('input[name="internet_tipo_conn"]:checked').value === 'dedicata';
-                const pu       = dedicata ? 300*12*0.20 : 50*12*0.20;
-                const tipoDesc = dedicata ? 'Dedicata: €300×12×20%' : 'Standard: €50×12×20%';
-                let costo = pu * disp;
-                txt += riga('Connessioni (circuiti) inserite', disp);
-                txt += riga('Tipo connessione', dedicata ? 'Dedicata' : 'Standard');
-                txt += riga('Formula applicata', tipoDesc);
-                txt += riga('Prezzo unitario', `€ ${pu.toFixed(2)}`);
-                txt += riga('Costo base (pu × circuiti)', `€ ${costo.toFixed(2)}`);
-                if (disp > 2 && op > 1) {
-                    const maggiMap = {2:0.10,3:0.20,4:0.30};
-                    const m = op >= 5 ? 0.40 : (maggiMap[op]||0);
-                    txt += riga(`Operatori: ${op} → maggiorazione`, `+${(m*100)}%`);
-                    costo = costo * (1+m);
-                    txt += riga('Costo dopo maggiorazione', `€ ${costo.toFixed(2)}`);
-                }
-                if (sedi > 1) {
-                    txt += riga(`N° Sedi: ${sedi} → moltiplicatore`, `×${sedi}`);
-                    costo = costo * sedi;
-                    txt += riga('Costo dopo moltiplicatore sedi', `€ ${costo.toFixed(2)}`);
-                }
-                txt += riga('TOTALE CONNETTIVITÀ INTERNET', `€ ${costo.toFixed(2)}`);
-                totaleServizio += costo;
-                dettagliBase.push({desc:`Connettività Internet (${disp} Connessioni)`, imp:`€ ${formatEuro(costo)}`});
-            }
-            txt += '\n';
-        });
-
-        // Minimo servizio
-        const totPrimaMin = totaleServizio;
-        totaleServizio = Math.max(1800, Math.min(80000, totaleServizio));
-        txt += sub('Applicazione soglie min/max');
-        txt += riga('Totale famiglie calcolato', `€ ${totPrimaMin.toFixed(2)}`);
-        if (totPrimaMin < 1800) {
-            txt += riga('Minimo contrattuale', '€ 1.800,00');
-            txt += riga('Adeguamento applicato', `€ ${(1800-totPrimaMin).toFixed(2)}`);
-        } else if (totPrimaMin > 80000) {
-            txt += riga('Massimo contrattuale', '€ 80.000,00');
-            txt += riga('Valore cappato a', '€ 80.000,00');
-        } else {
-            txt += riga('Nessun adeguamento (rientra nel range)', '—');
-        }
-        txt += riga('TOTALE MODULO BASE', `€ ${totaleServizio.toFixed(2)}`);
-
-        // ── MODULO PRO ──
-        txt += sep('MODULO PRO');
-        let totaleOpzioni = 0;
-
-        if (document.getElementById('opt_consulenza').checked) {
-            const n = parseInt(document.getElementById('num_capitolati').value) || 0;
-            if (n > 0) {
-                txt += sub('RFQ Dedicato');
-                const scontoMap = {2:0.10,3:0.15,4:0.20,5:0.25};
-                const sc = scontoMap[n] || 0;
-                const base = 2000 * n;
-                const costo = base * (1-sc);
-                txt += riga('Capitolati selezionati', n);
-                txt += riga('Prezzo unitario per capitolato', '€ 2.000,00');
-                txt += riga('Costo base (€2.000 × capitolati)', `€ ${base.toFixed(2)}`);
-                if (sc > 0) {
-                    txt += riga(`Sconto multi-famiglia applicato`, `${(sc*100)}%`);
-                    txt += riga('Importo sconto', `- € ${(base*sc).toFixed(2)}`);
-                }
-                txt += riga('TOTALE RFQ DEDICATO', `€ ${costo.toFixed(2)}`);
-                totaleOpzioni += costo;
-                txt += '\n';
-            }
-        }
-
-        if (document.getElementById('opt_fatturazione').checked) {
-            txt += sub('Servizio Verifica Corretta Fatturazione');
-            let dispFatt = 0;
-            ['energia','gas'].forEach(f => {
-                if (document.getElementById('fatt_'+f).checked) {
-                    const d = parseInt(document.getElementById(f+'_dispositivi').value)||0;
-                    txt += riga(`Dispositivi ${f} inclusi`, d);
-                    dispFatt += d;
-                }
-            });
-            const setup = dispFatt<=20?260:dispFatt<=50?420:dispFatt<=200?840:1700;
-            const varCosto = 3.1 * dispFatt * 12;
-            const totBase = setup + varCosto;
-            const costo = totBase * 1.35;
-            txt += riga('Totale dispositivi fatturazione', dispFatt);
-            txt += riga('Costo setup (fascia dispositivi)', `€ ${setup.toFixed(2)}`);
-            txt += riga('Costo variabile (€3,10 × disp × 12)', `€ ${varCosto.toFixed(2)}`);
-            txt += riga('Subtotale (setup + variabile)', `€ ${totBase.toFixed(2)}`);
-            txt += riga('Margine applicato (×1,35)', '×1,35');
-            txt += riga('TOTALE VERIFICA FATTURAZIONE', `€ ${costo.toFixed(2)}`);
-            totaleOpzioni += costo;
-            txt += '\n';
-        }
-
-        if (document.getElementById('opt_gestione_prioritaria').checked) {
-            txt += sub('Priority Ticket');
-            const perc = totaleServizio < 10000 ? 10 : totaleServizio > 50000 ? 1.5 : 5;
-            const costo = totaleServizio * perc / 100;
-            txt += riga('Base di calcolo (Totale Modulo BASE)', `€ ${totaleServizio.toFixed(2)}`);
-            txt += riga('Fascia applicata', totaleServizio < 10000 ? 'BASE < €10.000 → 10%' : totaleServizio > 50000 ? 'BASE > €50.000 → 1,5%' : 'BASE €10k–€50k → 5%');
-            txt += riga('Percentuale applicata', `${perc}%`);
-            txt += riga('TOTALE PRIORITY TICKET', `€ ${costo.toFixed(2)}`);
-            totaleOpzioni += costo;
-            txt += '\n';
-        }
-
-        if (document.getElementById('opt_reporting').checked) {
-            txt += sub('Report Dedicati');
-            const nomiRep = {energia:'Energia',gas:'Gas',mobile:'Telefonia Mobile',fissoint:'Telefonia Fissa & Connettività'};
-            const sel = Object.keys(nomiRep).filter(f => document.getElementById('rep_'+f).checked);
-            const costo = 1000 * Math.pow(1.15, Math.max(0, sel.length-1));
-            txt += riga('Famiglie selezionate', sel.length > 0 ? sel.map(f=>nomiRep[f]).join(', ') : 'Nessuna');
-            txt += riga('Prezzo prima famiglia', '€ 1.000,00');
-            if (sel.length > 1) txt += riga(`Fattore scalabilità (×1,15^${sel.length-1})`, `×${Math.pow(1.15,sel.length-1).toFixed(4)}`);
-            txt += riga('TOTALE REPORT DEDICATI', `€ ${costo.toFixed(2)}`);
-            totaleOpzioni += costo;
-            txt += '\n';
-        }
-
-        if (totaleOpzioni === 0) txt += '  Nessuna opzione PRO selezionata\n';
-
-        // ── RIEPILOGO ──
-        txt += sep('RIEPILOGO ECONOMICO');
-        let totale = totaleServizio + totaleOpzioni;
-        txt += riga('Totale Modulo BASE', `€ ${totaleServizio.toFixed(2)}`);
-        txt += riga('Totale Modulo PRO', `€ ${totaleOpzioni.toFixed(2)}`);
-        txt += riga('Subtotale', `€ ${totale.toFixed(2)}`);
-
-        const scontoSales = parseFloat(document.getElementById('sconto_sales').value) || 0;
-        if (scontoSales > 0) {
-            const imp = totale * scontoSales / 100;
-            txt += riga(`Sconto Sales (${scontoSales}%)`, `- € ${imp.toFixed(2)}`);
-            totale -= imp;
-            txt += riga('Totale dopo sconto Sales', `€ ${totale.toFixed(2)}`);
-        }
-        if (document.getElementById('sconto_direzione').checked) {
-            txt += riga('Sconto Direzione Commerciale', 'Da Autorizzare');
-        }
-        const totArr = Math.floor(totale/100)*100;
-        const arrot = totale - totArr;
-        if (arrot > 0) {
-            txt += riga('Arrotondamento', `- € ${arrot.toFixed(2)}`);
-        }
-        txt += '\n' + '─'.repeat(60) + '\n';
-        txt += riga('TOTALE OFFERTA (arrotondato)', `€ ${formatEuro(totArr)}`);
-        txt += '─'.repeat(60) + '\n';
-
-        txt += `\n  Generato il: ${new Date().toLocaleString('it-IT')}\n`;
-        txt += '  Copyright (c) 2026 FBC Group - Ad uso esclusivo interno\n';
-
-        const protocollo = document.getElementById('protocollo').value || '';
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(new Blob([txt], {type:'text/plain;charset=utf-8'}));
-        link.download = protocollo
-            ? `Calcoli_UM_${protocollo}_${new Date().toISOString().split('T')[0]}.txt`
-            : `Calcoli_UM_${new Date().toISOString().split('T')[0]}.txt`;
-        link.click();
-    }
-
-    // ── DOWNLOAD TXT ──────────────────────────────────────────────────────────
+    // ── DOWNLOAD OFFERTA TXT ──────────────────────────────────────────────────
     function downloadOfferta() {
         const d   = window.offertaDati;
         const sep = t => `\n==========================================\n  ${t}\n==========================================\n\n`;
@@ -1085,8 +758,7 @@
 
         txt += sep('RIEPILOGO ECONOMICO');
         d.riepilogo.forEach(r => txt += riga(r.desc, r.imp));
-        txt += "\n";
-        txt += riga('TOTALE OFFERTA', d.totale);
+        txt += "\n" + riga('TOTALE OFFERTA', d.totale);
 
         txt += "\n==========================================\n";
         txt += "  NOTE:\n  - Offerta valida 30 giorni\n  - Prezzi espressi in Euro\n  - IVA esclusa\n";
@@ -1098,9 +770,217 @@
         const protocollo = document.getElementById('protocollo').value || '';
         const link = document.createElement('a');
         link.href = URL.createObjectURL(new Blob([txt], {type:'text/plain;charset=utf-8'}));
-        link.download = protocollo
-            ? `Offerta_UM_${protocollo}_${new Date().toISOString().split('T')[0]}.txt`
-            : `Offerta_UM_${new Date().toISOString().split('T')[0]}.txt`;
+        link.download = protocollo ? `Offerta_UM_${protocollo}_${new Date().toISOString().split('T')[0]}.txt` : `Offerta_UM_${new Date().toISOString().split('T')[0]}.txt`;
+        link.click();
+    }
+
+    // ── DOWNLOAD FILE DI CALCOLO TXT ──────────────────────────────────────────
+    function downloadCalcoli() {
+        const sep  = t => `\n${'='.repeat(60)}\n  ${t}\n${'='.repeat(60)}\n\n`;
+        const sub  = t => `\n  ── ${t} ${'─'.repeat(Math.max(0,50-t.length))}\n`;
+        const riga = (label, val) => `    ${label.padEnd(45)} ${String(val).padStart(14)}\n`;
+
+        let txt = sep('FILE DI CALCOLO — SERVIZIO UTILITY MANAGEMENT');
+        txt += `  Cliente:         ${document.getElementById('nome_cliente').value || 'N/A'}\n`;
+        txt += `  Protocollo:      ${document.getElementById('protocollo').value || 'N/A'}\n`;
+        txt += `  Data:            ${document.getElementById('data_proposta').value || ''}\n`;
+        txt += `  Unique ID:       ${window.uniqueID || 'N/A'}\n\n`;
+        txt += `  Nota: tutti gli importi sono in Euro, IVA esclusa.\n`;
+
+        txt += sep('MODULO BASE');
+
+        const famiglie = [
+            {nome:'Energia',id:'energia'},{nome:'Gas',id:'gas'},
+            {nome:'Telefonia Mobile',id:'mobile'},{nome:'Telefonia Fissa',id:'fisso'},
+            {nome:'Connettività Internet',id:'internet'}
+        ];
+
+        let totaleServizio = 0;
+
+        famiglie.forEach(f => {
+            const disp = parseInt(document.getElementById(f.id+'_dispositivi').value) || 0;
+            if (disp === 0) return;
+            txt += sub(f.nome);
+
+            if (f.id === 'energia' || f.id === 'gas') {
+                const c   = getConsumo(f.id);
+                const op  = parseInt(document.getElementById(f.id+'_operatori').value) || 0;
+                const pu  = disp <= 5 ? 50 : disp <= 100 ? Math.max(5,50-(disp-5)*(45/95)) : 5;
+                const costoPDP = pu * disp;
+                const logMin = Math.log(50000), logMax = Math.log(5000000);
+                const t   = c > 0 ? (Math.min(Math.max(Math.log(c),logMin),logMax)-logMin)/(logMax-logMin) : 0;
+                const perc = c > 0 ? (3-2.5*t)/100 : 0;
+                const tariffa = f.id === 'energia' ? 0.21 : 0.80;
+                const costoUtils = c * tariffa;
+                const cc  = costoUtils * perc;
+                let costo = costoPDP + cc;
+                txt += riga('PDP inseriti', disp);
+                txt += riga('Prezzo unitario PDP', `€ ${pu.toFixed(2)}`);
+                txt += riga('Costo componente PDP (pu × PDP)', `€ ${costoPDP.toFixed(2)}`);
+                txt += riga('Consumo stimato', `${c.toLocaleString('it-IT')} ${f.id==='energia'?'kWh':'Smc'}`);
+                txt += riga(`Costo utilities (consumo × €${tariffa})`, `€ ${costoUtils.toFixed(2)}`);
+                txt += riga('t (scala logaritmica 50k–5M)', t.toFixed(4));
+                txt += riga('% servizio applicata (3% - 2,5%×t)', `${(perc*100).toFixed(4)}%`);
+                txt += riga('Componente consumo (utilities × %)', `€ ${cc.toFixed(2)}`);
+                txt += riga('Subtotale (PDP + consumo)', `€ ${costo.toFixed(2)}`);
+                if (disp > 1 && op > 1) {
+                    const m = maggiorazioneOperatori(op);
+                    txt += riga(`Operatori: ${op} → maggiorazione`, `+${(m*100)}%`);
+                    costo *= (1+m);
+                    txt += riga('Costo dopo maggiorazione', `€ ${costo.toFixed(2)}`);
+                }
+                txt += riga(`TOTALE ${f.nome.toUpperCase()}`, `€ ${costo.toFixed(2)}`);
+                totaleServizio += costo;
+
+            } else if (f.id === 'mobile') {
+                const op  = parseInt(document.getElementById('mobile_operatori').value) || 0;
+                const pu  = disp <= 5 ? 45*12*0.20 : disp <= 60 ? 15*12*0.20 : 15*12*0.15;
+                const fascia = disp<=5?'1–5: €45×12×20%':disp<=60?'6–60: €15×12×20%':'61+: €15×12×15%';
+                let costo = pu * disp;
+                txt += riga('Schede inserite', disp);
+                txt += riga('Fascia applicata', fascia);
+                txt += riga('Prezzo unitario', `€ ${pu.toFixed(2)}`);
+                txt += riga('Costo base (pu × schede)', `€ ${costo.toFixed(2)}`);
+                if (disp > 5 && op > 1) {
+                    const m = maggiorazioneOperatori(op);
+                    txt += riga(`Operatori: ${op} → maggiorazione`, `+${(m*100)}%`);
+                    costo *= (1+m);
+                    txt += riga('Costo dopo maggiorazione', `€ ${costo.toFixed(2)}`);
+                }
+                txt += riga('TOTALE TELEFONIA MOBILE', `€ ${costo.toFixed(2)}`);
+                totaleServizio += costo;
+
+            } else if (f.id === 'fisso') {
+                const op   = parseInt(document.getElementById('fisso_operatori').value) || 0;
+                const sedi = parseInt(document.getElementById('fisso_sedi').value) || 0;
+                const pu   = disp <= 15 ? 5*12*0.20 : 5*12*0.15;
+                let costo  = pu * disp;
+                txt += riga('Sistemi (linee) inseriti', disp);
+                txt += riga('Fascia', disp<=15?'1–15: €5×12×20%':'16+: €5×12×15%');
+                txt += riga('Prezzo unitario', `€ ${pu.toFixed(2)}`);
+                txt += riga('Costo base', `€ ${costo.toFixed(2)}`);
+                if (disp > 2 && op > 1) {
+                    const m = maggiorazioneOperatori(op);
+                    txt += riga(`Operatori: ${op} → maggiorazione`, `+${(m*100)}%`);
+                    costo *= (1+m);
+                    txt += riga('Costo dopo maggiorazione', `€ ${costo.toFixed(2)}`);
+                }
+                if (sedi > 1) { costo *= sedi; txt += riga(`N° Sedi: ${sedi} → moltiplicatore`, `×${sedi}`); txt += riga('Costo dopo moltiplicatore sedi', `€ ${costo.toFixed(2)}`); }
+                txt += riga('TOTALE TELEFONIA FISSA', `€ ${costo.toFixed(2)}`);
+                totaleServizio += costo;
+
+            } else if (f.id === 'internet') {
+                const op       = parseInt(document.getElementById('internet_operatori').value) || 0;
+                const sedi     = parseInt(document.getElementById('internet_sedi').value) || 0;
+                const dedicata = document.querySelector('input[name="internet_tipo_conn"]:checked').value === 'dedicata';
+                const pu       = dedicata ? 300*12*0.20 : 50*12*0.20;
+                let costo      = pu * disp;
+                txt += riga('Connessioni inserite', disp);
+                txt += riga('Tipo', dedicata?'Dedicata: €300×12×20%':'Standard: €50×12×20%');
+                txt += riga('Prezzo unitario', `€ ${pu.toFixed(2)}`);
+                txt += riga('Costo base', `€ ${costo.toFixed(2)}`);
+                if (disp > 2 && op > 1) {
+                    const m = maggiorazioneOperatori(op);
+                    txt += riga(`Operatori: ${op} → maggiorazione`, `+${(m*100)}%`);
+                    costo *= (1+m);
+                    txt += riga('Costo dopo maggiorazione', `€ ${costo.toFixed(2)}`);
+                }
+                if (sedi > 1) { costo *= sedi; txt += riga(`N° Sedi: ${sedi} → moltiplicatore`, `×${sedi}`); txt += riga('Costo dopo moltiplicatore sedi', `€ ${costo.toFixed(2)}`); }
+                txt += riga('TOTALE CONNETTIVITÀ INTERNET', `€ ${costo.toFixed(2)}`);
+                totaleServizio += costo;
+            }
+            txt += '\n';
+        });
+
+        txt += sub('Soglie min/max');
+        const totPrimaMin = totaleServizio;
+        totaleServizio = Math.max(1800, Math.min(80000, totaleServizio));
+        txt += riga('Totale famiglie calcolato', `€ ${totPrimaMin.toFixed(2)}`);
+        if (totPrimaMin < 1800) { txt += riga('Minimo contrattuale', '€ 1.800,00'); txt += riga('Adeguamento', `€ ${(1800-totPrimaMin).toFixed(2)}`); }
+        else if (totPrimaMin > 80000) { txt += riga('Cappato al massimo', '€ 80.000,00'); }
+        else { txt += riga('Nessun adeguamento', '—'); }
+        txt += riga('TOTALE MODULO BASE', `€ ${totaleServizio.toFixed(2)}`);
+
+        txt += sep('MODULO PRO');
+        let totaleOpzioni = 0;
+
+        if (document.getElementById('opt_consulenza').checked) {
+            const n = parseInt(document.getElementById('num_capitolati').value) || 0;
+            const hasFamiglie = document.querySelectorAll('.cons-famiglia:checked').length > 0;
+            if (n > 0 && hasFamiglie) {
+                txt += sub('RFQ Dedicato');
+                const scontoMap = {2:0.10,3:0.15,4:0.20,5:0.25};
+                const sc = scontoMap[n]||0;
+                const base = 2000*n, costo = base*(1-sc);
+                txt += riga('Capitolati', n); txt += riga('Base (€2.000 × n)', `€ ${base.toFixed(2)}`);
+                if (sc>0) { txt += riga(`Sconto ${sc*100}%`, `- € ${(base*sc).toFixed(2)}`); }
+                txt += riga('TOTALE RFQ', `€ ${costo.toFixed(2)}`);
+                totaleOpzioni += costo; txt += '\n';
+            }
+        }
+
+        const fattRes = calcolaFatturazione();
+        if (fattRes) {
+            txt += sub('Servizio Verifica Corretta Fatturazione');
+            txt += riga('Dispositivi inclusi', fattRes.dispFatt);
+            txt += riga('Setup (fascia)', `€ ${fattRes.setup.toFixed(2)}`);
+            txt += riga('Variabile (€3,10 × disp × 12)', `€ ${(3.1*fattRes.dispFatt*12).toFixed(2)}`);
+            txt += riga('Subtotale × 1,35', `€ ${fattRes.costo.toFixed(2)}`);
+            txt += riga('TOTALE FATTURAZIONE', `€ ${fattRes.costo.toFixed(2)}`);
+            totaleOpzioni += fattRes.costo; txt += '\n';
+        }
+
+        if (document.getElementById('opt_gestione_prioritaria').checked) {
+            txt += sub('Priority Ticket');
+            const perc = totaleServizio < 10000 ? 10 : totaleServizio > 50000 ? 1.5 : 5;
+            const costo = totaleServizio * perc / 100;
+            txt += riga('Base (Totale Modulo BASE)', `€ ${totaleServizio.toFixed(2)}`);
+            txt += riga('Fascia', totaleServizio<10000?'<€10k → 10%':totaleServizio>50000?'>€50k → 1,5%':'€10k–€50k → 5%');
+            txt += riga('TOTALE PRIORITY TICKET', `€ ${costo.toFixed(2)}`);
+            totaleOpzioni += costo; txt += '\n';
+        }
+
+        if (document.getElementById('opt_reporting').checked) {
+            const nomiRep = {energia:'Energia',gas:'Gas',mobile:'Telefonia Mobile',fissoint:'Telefonia Fissa & Connettività'};
+            const sel = Object.keys(nomiRep).filter(f => document.getElementById('rep_'+f).checked);
+            if (sel.length > 0) {
+                txt += sub('Report Dedicati');
+                const costo = 1000 * Math.pow(1.15, Math.max(0, sel.length-1));
+                txt += riga('Famiglie', sel.map(f=>nomiRep[f]).join(', '));
+                txt += riga('Formula (€1.000 × 1,15^(n-1))', `€ ${costo.toFixed(2)}`);
+                txt += riga('TOTALE REPORT', `€ ${costo.toFixed(2)}`);
+                totaleOpzioni += costo; txt += '\n';
+            }
+        }
+
+        if (totaleOpzioni === 0) txt += '  Nessuna opzione PRO selezionata\n';
+
+        txt += sep('RIEPILOGO ECONOMICO');
+        let totale = totaleServizio + totaleOpzioni;
+        txt += riga('Totale Modulo BASE', `€ ${totaleServizio.toFixed(2)}`);
+        txt += riga('Totale Modulo PRO',  `€ ${totaleOpzioni.toFixed(2)}`);
+        txt += riga('Subtotale',          `€ ${totale.toFixed(2)}`);
+        const scontoSales = parseFloat(document.getElementById('sconto_sales').value) || 0;
+        if (scontoSales > 0) {
+            const imp = totale * scontoSales / 100;
+            txt += riga(`Sconto Sales (${scontoSales}%)`, `- € ${imp.toFixed(2)}`);
+            totale -= imp;
+            txt += riga('Dopo sconto Sales', `€ ${totale.toFixed(2)}`);
+        }
+        if (document.getElementById('sconto_direzione').checked) txt += riga('Sconto Direzione', 'Da Autorizzare');
+        const totArr = Math.floor(totale/100)*100;
+        const arrot  = totale - totArr;
+        if (arrot > 0) txt += riga('Arrotondamento', `- € ${arrot.toFixed(2)}`);
+        txt += '\n' + '─'.repeat(60) + '\n';
+        txt += riga('TOTALE OFFERTA', `€ ${formatEuro(totArr)}`);
+        txt += '─'.repeat(60) + '\n';
+        txt += `\n  Generato il: ${new Date().toLocaleString('it-IT')}\n`;
+        txt += '  Copyright (c) 2026 FBC Group - Ad uso esclusivo interno\n';
+
+        const protocollo = document.getElementById('protocollo').value || '';
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([txt], {type:'text/plain;charset=utf-8'}));
+        link.download = protocollo ? `Calcoli_UM_${protocollo}_${new Date().toISOString().split('T')[0]}.txt` : `Calcoli_UM_${new Date().toISOString().split('T')[0]}.txt`;
         link.click();
     }
 </script>
