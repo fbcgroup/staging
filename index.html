@@ -369,7 +369,7 @@
                 </div>
                 <div style="text-align:center;margin-top:30px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;">
                     <button onclick="downloadOfferta()" style="background:white;color:#1e3a8a;border:2px solid #1e3a8a;padding:12px 40px;font-size:1em;">Scarica Offerta (TXT)</button>
-                    <button onclick="downloadCalcoli()" style="background:white;color:#1e6b3a;border:2px solid #1e6b3a;padding:12px 40px;font-size:1em;">Genera File di Calcolo (TXT)</button>
+                    <button id="btn_calcoli" onclick="downloadCalcoli()" class="hidden" style="background:white;color:#1e6b3a;border:2px solid #1e6b3a;padding:12px 40px;font-size:1em;">Genera File di Calcolo (TXT)</button>
                 </div>
             </div>
         </div>
@@ -601,7 +601,8 @@
 
         if (document.getElementById('opt_consulenza').checked) {
             const n = parseInt(document.getElementById('num_capitolati').value) || 0;
-            if (n > 0) {
+            const hasFamiglie = document.querySelectorAll('.cons-famiglia:checked').length > 0;
+            if (n > 0 && hasFamiglie) {
                 const scontoMap = {2:0.10,3:0.15,4:0.20,5:0.25};
                 const sc = scontoMap[n] || 0;
                 const costo = 2000 * n * (1-sc);
@@ -636,11 +637,13 @@
         if (document.getElementById('opt_reporting').checked) {
             const nomiRep = {energia:'Energia', gas:'Gas', mobile:'Telefonia Mobile', fissoint:'Telefonia Fissa & Connettività'};
             const sel = Object.keys(nomiRep).filter(f => document.getElementById('rep_'+f).checked);
-            const lista = sel.length > 0 ? sel.map(f => nomiRep[f]).join(', ') : 'Nessuna famiglia';
-            const costo = 1000 * Math.pow(1.15, Math.max(0, sel.length-1));
-            totaleOpzioni += costo;
-            const desc = `Report Dedicati (${lista})`, imp = `€ ${formatEuro(costo)}`;
-            righePro.push({desc, imp}); htmlPro += dLine(desc, imp);
+            if (sel.length > 0) {
+                const lista = sel.map(f => nomiRep[f]).join(', ');
+                const costo = 1000 * Math.pow(1.15, Math.max(0, sel.length-1));
+                totaleOpzioni += costo;
+                const desc = `Report Dedicati (${lista})`, imp = `€ ${formatEuro(costo)}`;
+                righePro.push({desc, imp}); htmlPro += dLine(desc, imp);
+            }
         }
 
         // Riepilogo
@@ -737,6 +740,11 @@
         if (totArr > 8000) avviso.classList.remove('hidden');
         else avviso.classList.add('hidden');
         window.uniqueID = `FBC-${Date.now()}-${Math.floor(Math.random()*10000).toString().padStart(4,'0')}`;
+        const abilitati = ['pallotta','bussini','bevilacqua','gandolfi'];
+        const um = (document.getElementById('utility_manager').value || '').toLowerCase().trim();
+        const mostraCalcoli = abilitati.some(n => um.includes(n));
+        document.getElementById('btn_calcoli').classList.toggle('hidden', !mostraCalcoli);
+
         document.getElementById('risultato').style.display = 'block';
         document.getElementById('risultato').scrollIntoView({behavior:'smooth'});
     }
