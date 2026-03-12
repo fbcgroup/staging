@@ -279,6 +279,7 @@
                             <div class="checkbox-group"><input type="checkbox" id="cons_gas" class="cons-famiglia"><label for="cons_gas">Gas</label></div>
                             <div class="checkbox-group"><input type="checkbox" id="cons_mobile" class="cons-famiglia"><label for="cons_mobile">Telefonia Mobile</label></div>
                             <div class="checkbox-group"><input type="checkbox" id="cons_fissoint" class="cons-famiglia"><label for="cons_fissoint">Telefonia Fissa & Connettività</label></div>
+                            <div id="avviso_cons" class="hidden" style="margin-top:10px;padding:10px 14px;background:#fff7ed;border:1px solid #f59e0b;border-radius:2px;color:#92400e;font-size:0.88em;font-weight:600;">⚠️ Attenzione! Selezionare almeno una delle voci</div>
                             <div style="margin-top:15px;">
                                 <label>Numero di Capitolati</label>
                                 <input type="number" id="num_capitolati" min="0" value="0" readonly style="background:#f5f7fa;color:#6b7280;cursor:not-allowed;">
@@ -298,6 +299,7 @@
                             <p>Seleziona le famiglie da includere:</p>
                             <div class="checkbox-group"><input type="checkbox" id="fatt_energia"><label for="fatt_energia">Energia</label></div>
                             <div class="checkbox-group"><input type="checkbox" id="fatt_gas"><label for="fatt_gas">Gas</label></div>
+                            <div id="avviso_fatt" class="hidden" style="margin-top:10px;padding:10px 14px;background:#fff7ed;border:1px solid #f59e0b;border-radius:2px;color:#92400e;font-size:0.88em;font-weight:600;">⚠️ Attenzione! Selezionare almeno una delle voci</div>
                         </div>
                     </div>
                     <!-- Priority Ticket -->
@@ -319,6 +321,7 @@
                             <div class="checkbox-group"><input type="checkbox" id="rep_gas"><label for="rep_gas">Gas</label></div>
                             <div class="checkbox-group"><input type="checkbox" id="rep_mobile"><label for="rep_mobile">Telefonia Mobile</label></div>
                             <div class="checkbox-group"><input type="checkbox" id="rep_fissoint"><label for="rep_fissoint">Telefonia Fissa & Connettività</label></div>
+                            <div id="avviso_rep" class="hidden" style="margin-top:10px;padding:10px 14px;background:#fff7ed;border:1px solid #f59e0b;border-radius:2px;color:#92400e;font-size:0.88em;font-weight:600;">⚠️ Attenzione! Selezionare almeno una delle voci</div>
                         </div>
                     </div>
                 </div>
@@ -425,14 +428,34 @@
     // ── TOGGLE OPZIONI ────────────────────────────────────────────────────────
     document.getElementById('opt_reporting').addEventListener('change', function() {
         document.getElementById('reporting_famiglie').classList.toggle('hidden', !this.checked);
-        if (!this.checked) document.querySelectorAll('[id^="rep_"]').forEach(cb => cb.checked = false);
+        if (!this.checked) {
+            document.querySelectorAll('[id^="rep_"]').forEach(cb => cb.checked = false);
+            document.getElementById('avviso_rep').classList.add('hidden');
+        } else {
+            document.getElementById('avviso_rep').classList.remove('hidden');
+        }
+    });
+    document.querySelectorAll('[id^="rep_"]').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const hasSel = document.querySelectorAll('[id^="rep_"]:checked').length > 0;
+            document.getElementById('avviso_rep').classList.toggle('hidden', hasSel);
+        });
     });
     document.getElementById('opt_fatturazione').addEventListener('change', function() {
         document.getElementById('fatturazione_famiglie').classList.toggle('hidden', !this.checked);
         if (!this.checked) {
             document.getElementById('fatt_energia').checked = false;
             document.getElementById('fatt_gas').checked = false;
+            document.getElementById('avviso_fatt').classList.add('hidden');
+        } else {
+            document.getElementById('avviso_fatt').classList.remove('hidden');
         }
+    });
+    ['fatt_energia','fatt_gas'].forEach(id => {
+        document.getElementById(id).addEventListener('change', function() {
+            const hasSel = document.getElementById('fatt_energia').checked || document.getElementById('fatt_gas').checked;
+            document.getElementById('avviso_fatt').classList.toggle('hidden', hasSel);
+        });
     });
     document.getElementById('opt_consulenza').addEventListener('change', function() {
         document.getElementById('consulenza_input').classList.toggle('hidden', !this.checked);
@@ -440,6 +463,9 @@
             document.querySelectorAll('.cons-famiglia').forEach(cb => cb.checked = false);
             document.getElementById('num_capitolati').value = 0;
             document.getElementById('cons_sconto_info').classList.add('hidden');
+            document.getElementById('avviso_cons').classList.add('hidden');
+        } else {
+            document.getElementById('avviso_cons').classList.remove('hidden');
         }
     });
     document.querySelectorAll('.cons-famiglia').forEach(cb => {
@@ -450,6 +476,7 @@
             const info = document.getElementById('cons_sconto_info');
             if (scontoMap[count]) { document.getElementById('cons_sconto_label').textContent = scontoMap[count]; info.classList.remove('hidden'); }
             else info.classList.add('hidden');
+            document.getElementById('avviso_cons').classList.toggle('hidden', count > 0);
         });
     });
 
@@ -625,7 +652,7 @@
         const fattRes = calcolaFatturazione();
         if (fattRes) {
             totaleOpzioni += fattRes.costo;
-            const desc = `Servizio Verifica Corretta Fatturazione (${fattRes.dispFatt} dispositivi)`;
+                            const desc = `Servizio Verifica Corretta Fatturazione (${fattRes.dispFatt} PDP)`;
             const imp  = `€ ${formatEuro(fattRes.costo)}`;
             righePro.push({desc, imp}); htmlPro += dLine(desc, imp);
         }
@@ -922,9 +949,9 @@
         const fattRes = calcolaFatturazione();
         if (fattRes) {
             txt += sub('Servizio Verifica Corretta Fatturazione');
-            txt += riga('Dispositivi inclusi', fattRes.dispFatt);
+            txt += riga('PDP inclusi', fattRes.dispFatt);
             txt += riga('Setup (fascia)', `€ ${fattRes.setup.toFixed(2)}`);
-            txt += riga('Variabile (€3,10 × disp × 12)', `€ ${(3.1*fattRes.dispFatt*12).toFixed(2)}`);
+            txt += riga('Variabile (€3,10 × PDP × 12)', `€ ${(3.1*fattRes.dispFatt*12).toFixed(2)}`);
             txt += riga('Subtotale × 1,35', `€ ${fattRes.costo.toFixed(2)}`);
             txt += riga('TOTALE FATTURAZIONE', `€ ${fattRes.costo.toFixed(2)}`);
             totaleOpzioni += fattRes.costo; txt += '\n';
